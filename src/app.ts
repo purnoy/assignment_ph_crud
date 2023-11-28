@@ -7,8 +7,8 @@ const app: Application = express();
 app.use(express.json());
 app.use(cors());
 
-app.get('/', (req:Request, res: Response)=>{
-    res.send("hello World")
-})
+app.get('/', (req: Request, res: Response) => {
+    res.send('hello World');
+});
 
 export default app;
