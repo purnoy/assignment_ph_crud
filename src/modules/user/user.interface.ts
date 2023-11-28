@@ -30,8 +30,8 @@ export type TUser = {
 }
 
 export type UserMethods = {
-    isUserExists(id:number) : Promise<TUser |null>
-    isUsernameExists(username:string) : Promise<TUser |null>
+    isUserExists(id:number) : Promise<TUser | boolean | null>
+    isUsernameExists(username:string) : Promise<TUser | null>
 }
 
 export type UserModel = Model<TUser, Record<string, never>, UserMethods>

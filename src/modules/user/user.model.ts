@@ -54,7 +54,7 @@ UserSchema.post('save', async function(
 //Instace for finding whether the user is avalable in the database or not
 UserSchema.methods.isUserExists = async function(id:number){
     const existingUser = await UserMainModel.findOne({userId:id});
-    return existingUser !==null;
+    return existingUser !== null;
 }
 UserSchema.methods.isUsernameExists = async function (username:string){
     const usernameExists = await UserMainModel.findOne({username})

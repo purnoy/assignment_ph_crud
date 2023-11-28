@@ -52,7 +52,7 @@ const getUsers = async (req:Request, res: Response) =>{
     }catch(err:any){
         res.status(404).json({
             "success": false,
-            "message": err.message || 'Could Not Find the user' ,
+            "message": err.message || 'Could Not Find any users' ,
             "error": {
                 "code": 404,
                 "description": err.message
@@ -61,7 +61,36 @@ const getUsers = async (req:Request, res: Response) =>{
     }
 }
 
+
+//Requirement - 3 Get the single User
+const getSingleUser = async (req:Request, res: Response) =>{
+    try{
+        const { userId } = req.params;
+        const { user: userData } = req.body;
+        const result = await UserServices.getSingleUserFromDB(Number(userId), userData);
+
+        if(result){
+            res.status(200).json({
+                "success": true,
+                "message": "Successfully found the userlist",
+                "data": result
+            })
+        }
+    
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }catch(err:any){
+        res.status(404).json({
+            "success": false,
+            "message": err.message || 'Could Not Find the user' ,
+            "error": {
+                "code": 404,
+                "description": err.message
+            }
+        })
+    }
+}
 export const UserControllers = {
     createUser,
-    getUsers
+    getUsers,
+    getSingleUser
 }
