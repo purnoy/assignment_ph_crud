@@ -1,30 +1,30 @@
 import { z } from'zod';
 
-const FullNameSchema = z.object({
+const FullNameValidatedSchema = z.object({
     firstName: z.string(),
     lastName: z.string()
 });
 
-const AddressSchema = z.object({
+const AddressValidatedSchema = z.object({
     street: z.string(),
     city: z.string(),
     country: z.string()
 })
 
-const OrderSchema = z.object({
+const OrderValidatedSchema = z.object({
     productName: z.string(),
-    price: z.string(),
-    quantity: z.string(),
+    price: z.number(),
+    quantity: z.number(),
 })
 
-const UserSchema = z.object({
+const UserValidatedSchema = z.object({
     userId: z.number(),
     username: z.string({
         required_error: "Username is required",
         invalid_type_error: "Username must be a string",
       }),
     password: z.string(),
-    fullName: FullNameSchema,
+    fullName: FullNameValidatedSchema,
     age: z.number({
         required_error: "Age number is required",
         invalid_type_error: "Age number must be a number",
@@ -32,8 +32,8 @@ const UserSchema = z.object({
     email: z.string().email(),
     isActive: z.boolean().default(true),
     hobbies: z.array(z.string()),
-    address: AddressSchema,
-    orders:z.array(OrderSchema)
+    address: AddressValidatedSchema,
+    orders:z.array(OrderValidatedSchema)
 })
 
-export default UserSchema;
+export default UserValidatedSchema;
