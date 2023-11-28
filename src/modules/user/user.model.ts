@@ -60,4 +60,4 @@ UserSchema.methods.isUsernameExists = async function (username:string){
     const usernameExists = await UserMainModel.findOne({username})
     return usernameExists
 }
-export const UserMainModel = model<TUser, UserModel>('user', UserSchema)
+export const UserMainModel = model<TUser, UserModel>('user', UserSchema, )
