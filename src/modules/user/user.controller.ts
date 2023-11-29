@@ -8,7 +8,6 @@ const createUser = async (req: Request, res: Response) => {
         const { user: userData } = req.body;
         const userZodValidated = UserValidatedSchema.parse(userData);
         const result = await UserServices.createUserFromDB(userZodValidated);
-        console.log(result);
         res.status(200).json({
             success: true,
             message: 'Successfully Added a New Using ',
@@ -111,9 +110,41 @@ const updateUserInformation = async (req: Request, res: Response) => {
         });
     }
 };
+
+//5. Delete a user
+const deleteUser = async (req: Request, res: Response) => {
+    try {
+        const { userId } = req.params;
+        console.log(userId);
+        const result = await UserServices.deleteUserFromDB(Number(userId));
+
+        if (result && result !== undefined && result !== null) {
+            res.status(200).json({
+                success: true,
+                message: 'Successfully Deleted the data',
+                data: result,
+            });
+        } else {
+            res.status(404).json({
+                success: false,
+                message: 'Data Could not Deleted',
+                data: result,
+            });
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+        res.status(500).json({
+            success: false,
+            message: err.message || 'Invalid Data',
+            err,
+        });
+    }
+};
+
 export const UserControllers = {
     createUser,
     getUsers,
     getSingleUser,
     updateUserInformation,
+    deleteUser,
 };

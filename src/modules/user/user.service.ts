@@ -11,6 +11,7 @@ const createUserFromDB = async (userData: TUser) => {
         throw new Error('Username is already used');
     }
     const result = await user.save();
+    //const { password, orders, ...finalResult } = result.toObject();
     const finalResult = {
         userId: result.userId,
         username: result.username,
@@ -92,9 +93,19 @@ const updateUserInformationFromDB = async (id: number, userData: TUser) => {
     );
     return result;
 };
+
+//5. Delete a user
+const deleteUserFromDB = async (userIdtoDelete: number) => {
+    if (!(await UserMainModel.isUserExists(userIdtoDelete))) {
+        throw new Error('User does not exist!!');
+    }
+    const result = await UserMainModel.deleteOne({ userId: userIdtoDelete });
+    return result;
+};
 export const UserServices = {
     createUserFromDB,
     getUsersFromDB,
     getSingleUserFromDB,
     updateUserInformationFromDB,
+    deleteUserFromDB,
 };
