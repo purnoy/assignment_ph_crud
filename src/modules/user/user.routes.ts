@@ -6,6 +6,7 @@ const router = express.Router();
 //Requirement 1 - Create a new user
 router.post('/', UserControllers.createUser);
 router.get('/', UserControllers.getUsers);
-router.get('/:userId', UserControllers.getSingleUser)
+router.get('/:userId', UserControllers.getSingleUser);
+router.put('/:userId', UserControllers.updateUserInformation )
 
 export const UserRouter = router;

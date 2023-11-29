@@ -1,20 +1,20 @@
-import { Model } from "mongoose";
+import { Model } from 'mongoose';
 
 export type TFullName = {
     firstName: string;
     lastName: string;
-}
+};
 
 export type TAddress = {
     street: string;
     city: string;
     country: string;
-}
+};
 export type TOrder = {
     productName: string;
     price: number;
     quantity: number;
-}
+};
 
 export type TUser = {
     userId: number;
@@ -26,12 +26,15 @@ export type TUser = {
     isActive: boolean;
     hobbies: string[];
     address: TAddress;
-    orders: TOrder[]
-}
+    orders: TOrder[];
+};
 
 export type UserMethods = {
-    isUserExists(id:number) : Promise<TUser | boolean | null>
-    isUsernameExists(username:string) : Promise<TUser | null>
-}
+    isUserExists(id: number): Promise<TUser | boolean | null>;
+    isUsernameExists(username: string): Promise<TUser | null>;
+};
 
-export type UserModel = Model<TUser, Record<string, never>, UserMethods>
+export interface UserModel extends Model<TUser> {
+    isUserExists(id: number): Promise<TUser | boolean | null>;
+    isUsernameExists(username: string): Promise<TUser | boolean | null>;
+}
