@@ -8,16 +8,11 @@ const createUser = async (req: Request, res: Response) => {
         const { user: userData } = req.body;
         const userZodValidated = UserValidatedSchema.parse(userData);
         const result = await UserServices.createUserFromDB(userZodValidated);
-        const {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            password,
-            ...passwordLessResult
-        } = result.toObject();
-
+        console.log(result);
         res.status(200).json({
             success: true,
             message: 'Successfully Added a New Using ',
-            data: passwordLessResult,
+            data: result,
         });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {

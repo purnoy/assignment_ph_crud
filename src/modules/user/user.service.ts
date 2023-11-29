@@ -10,8 +10,19 @@ const createUserFromDB = async (userData: TUser) => {
     if (await UserMainModel.isUsernameExists(user.username)) {
         throw new Error('Username is already used');
     }
-    const result = user.save();
-    return result;
+    const result = await user.save();
+    const finalResult = {
+        userId: result.userId,
+        username: result.username,
+        fullName: result.fullName,
+        age: result.age,
+        email: result.email,
+        isActive: result.isActive,
+        hobbies: result.hobbies,
+        address: result.address,
+    };
+
+    return finalResult;
 };
 
 //Requirement - 2 Get User
@@ -29,11 +40,24 @@ const getSingleUserFromDB = async (userId: number) => {
         throw new Error('This user is not available');
     }
 
-    const result = await UserMainModel.findOne({ userId }).select('-password');
+    const result = await UserMainModel.findOne(
+        { userId },
+        {
+            username: 1,
+            userId: 1,
+            fullName: 1,
+            age: 1,
+            email: 1,
+            isActive: 1,
+            hobbies: 1,
+            address: 1,
+            _id: 0,
+        },
+    ).select('-password');
     return result;
 };
 
-//Requirement - 34 Update user information
+//Requirement - 4 Update user information
 const updateUserInformationFromDB = async (id: number, userData: TUser) => {
     const updatedUser = new UserMainModel(userData);
 
@@ -43,10 +67,6 @@ const updateUserInformationFromDB = async (id: number, userData: TUser) => {
     const existingUser = await UserMainModel.findOne({
         userId: id,
     });
-    if (!existingUser) {
-        throw new Error('User not found');
-    }
-    console.log(existingUser);
     if (
         updatedUser.userId !== existingUser?.userId ||
         updatedUser.username !== existingUser.username
@@ -58,6 +78,16 @@ const updateUserInformationFromDB = async (id: number, userData: TUser) => {
         { $set: { ...updatedUser.toObject(), _id: existingUser._id } },
         {
             new: true,
+            select: '-password',
+            username: 1,
+            userId: 1,
+            fullName: 1,
+            age: 1,
+            email: 1,
+            isActive: 1,
+            hobbies: 1,
+            address: 1,
+            _id: 0,
         },
     );
     return result;
