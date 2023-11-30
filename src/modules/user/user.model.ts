@@ -10,22 +10,37 @@ import {
 import bcrypt from 'bcrypt';
 import config from '../../app/config';
 
-const FullNameSchema = new Schema<TFullName>({
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
-});
+const FullNameSchema = new Schema<TFullName>(
+    {
+        firstName: { type: String, required: true },
+        lastName: { type: String, required: true },
+    },
+    {
+        _id: false,
+    },
+);
 
-const AddressSchema = new Schema<TAddress>({
-    street: { type: String, required: true },
-    city: { type: String, required: true },
-    country: { type: String, required: true },
-});
+const AddressSchema = new Schema<TAddress>(
+    {
+        street: { type: String, required: true },
+        city: { type: String, required: true },
+        country: { type: String, required: true },
+    },
+    {
+        _id: false,
+    },
+);
 
-const OrderSchema = new Schema<TOrder>({
-    productName: { type: String, required: true },
-    price: { type: Number, required: true },
-    quantity: { type: Number, required: true },
-});
+const OrderSchema = new Schema<TOrder>(
+    {
+        productName: { type: String, required: true },
+        price: { type: Number, required: true },
+        quantity: { type: Number, required: true },
+    },
+    {
+        _id: false,
+    },
+);
 
 const UserSchema = new Schema<TUser, UserMethods, UserModel>({
     userId: { type: Number, required: true, unique: true },
@@ -37,7 +52,7 @@ const UserSchema = new Schema<TUser, UserMethods, UserModel>({
     isActive: { type: Boolean, required: true, default: true },
     hobbies: { type: [String], required: true },
     address: { type: AddressSchema, required: true },
-    orders: { type: [OrderSchema], required: true },
+    orders: [OrderSchema],
 });
 
 //Creating Middleware

@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import UserValidatedSchema from './user.validation';
 import { UserServices } from './user.service';
 
-//Requirement - 1 Create User
+//Requirement - 1 Create a new user
 const createUser = async (req: Request, res: Response) => {
     try {
         const { user: userData } = req.body;
@@ -27,7 +27,7 @@ const createUser = async (req: Request, res: Response) => {
     }
 };
 
-//Requirement - 2 Get User
+//Requirement - 2 Retrieve a list of all users
 const getUsers = async (req: Request, res: Response) => {
     try {
         const result = await UserServices.getUsersFromDB();
@@ -53,7 +53,7 @@ const getUsers = async (req: Request, res: Response) => {
     }
 };
 
-//Requirement - 3 Get the single User
+//Requirement - 3 Retrieve a specific user by ID
 const getSingleUser = async (req: Request, res: Response) => {
     try {
         const { userId } = req.params;
@@ -80,7 +80,7 @@ const getSingleUser = async (req: Request, res: Response) => {
     }
 };
 
-//Requirement - 34 Update user information
+//Requirement - 4 Update user information
 const updateUserInformation = async (req: Request, res: Response) => {
     try {
         const { user: userData } = req.body;
@@ -115,7 +115,6 @@ const updateUserInformation = async (req: Request, res: Response) => {
 const deleteUser = async (req: Request, res: Response) => {
     try {
         const { userId } = req.params;
-        console.log(userId);
         const result = await UserServices.deleteUserFromDB(Number(userId));
 
         if (result && result !== undefined && result !== null) {
@@ -141,10 +140,82 @@ const deleteUser = async (req: Request, res: Response) => {
     }
 };
 
+//1. Add New Product in Order
+const addOrUpdateOrders = async (req: Request, res: Response) => {
+    try {
+        const { userId } = req.params;
+
+        const usersOrder = req.body;
+        const result = await UserServices.addOrUpdateOrdersFromDB(
+            Number(userId),
+            usersOrder,
+        );
+        res.status(200).json({
+            success: true,
+            message: 'Successfull added the order',
+            data: result,
+        });
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+        res.status(500).json({
+            success: false,
+            message: err.message || 'Invalid Data',
+            err,
+        });
+    }
+};
+
+//2. Retrieve all orders for a specific user
+const showAllOrders = async (req: Request, res: Response) => {
+    try {
+        const { userId } = req.params;
+        const result = await UserServices.showAllOrdersFromDB(Number(userId));
+        res.status(200).json({
+            success: true,
+            message: 'Successfully shown the data',
+            data: result,
+        });
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+        res.status(500).json({
+            success: false,
+            message: err.message || 'Invalid Data',
+            err,
+        });
+    }
+};
+
+//3. Calculate Total Price of Orders for a Specific User
+const getTotalPrice = async (req: Request, res: Response) => {
+    try {
+        const { userId } = req.params;
+
+        const result = await UserServices.getTotalPriceFromDB(Number(userId));
+        res.status(200).json({
+            success: true,
+            message: 'Successfully shown the data',
+            data: result,
+        });
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+        res.status(500).json({
+            success: false,
+            message: err.message || 'Invalid Data',
+            err,
+        });
+    }
+};
+
 export const UserControllers = {
     createUser,
     getUsers,
     getSingleUser,
     updateUserInformation,
     deleteUser,
+    addOrUpdateOrders,
+    showAllOrders,
+    getTotalPrice,
 };

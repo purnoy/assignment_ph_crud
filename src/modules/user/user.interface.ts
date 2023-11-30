@@ -26,7 +26,7 @@ export type TUser = {
     isActive: boolean;
     hobbies: string[];
     address: TAddress;
-    orders: TOrder[];
+    orders?: TOrder[];
 };
 
 export type UserMethods = {
