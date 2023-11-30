@@ -78,6 +78,24 @@ UserSchema.post(
     },
 );
 
+//Query Middleware
+UserSchema.pre('find', function (next) {
+    this.find({ isDeleted: { $ne: true } });
+    this.select({ password: 0 });
+    next();
+});
+
+UserSchema.pre('findOne', function (next) {
+    this.findOne({ isDeleted: { $ne: true } });
+    this.select({ password: 0 });
+    next();
+});
+UserSchema.pre('aggregate', function (next) {
+    this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+    this.pipeline().push({ $project: { password: 0 } });
+    next();
+});
+
 //Instace for finding whether the user is avalable in the database or not
 UserSchema.statics.isUserExists = async function (id: number) {
     const existingUser = await UserMainModel.findOne({ userId: id });
