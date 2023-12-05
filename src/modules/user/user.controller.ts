@@ -83,8 +83,7 @@ const getSingleUser = async (req: Request, res: Response) => {
 //Requirement - 4 Update user information
 const updateUserInformation = async (req: Request, res: Response) => {
     try {
-        const { user: userData } = req.body;
-        const userZodValidated = UserValidatedSchema.parse(userData);
+        const userZodValidated = UserValidatedSchema.parse(req.body);
         const { userId } = req.params;
         const result = await UserServices.updateUserInformationFromDB(
             Number(userId),
