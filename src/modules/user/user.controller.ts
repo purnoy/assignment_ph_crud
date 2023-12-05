@@ -5,7 +5,7 @@ import { UserServices } from './user.service';
 //Requirement - 1 Create a new user
 const createUser = async (req: Request, res: Response) => {
     try {
-        const { user: userData } = req.body;
+        const userData = req.body;
         const userZodValidated = UserValidatedSchema.parse(userData);
         const result = await UserServices.createUserFromDB(userZodValidated);
         res.status(200).json({
@@ -83,7 +83,8 @@ const getSingleUser = async (req: Request, res: Response) => {
 //Requirement - 4 Update user information
 const updateUserInformation = async (req: Request, res: Response) => {
     try {
-        const userZodValidated = UserValidatedSchema.parse(req.body);
+        const userData = req.body;
+        const userZodValidated = UserValidatedSchema.parse(userData);
         const { userId } = req.params;
         const result = await UserServices.updateUserInformationFromDB(
             Number(userId),
