@@ -84,20 +84,19 @@ const getSingleUser = async (req: Request, res: Response) => {
 const updateUserInformation = async (req: Request, res: Response) => {
     try {
         const userData = req.body;
-        const userZodValidated = UserValidatedSchema.parse(userData);
         const { userId } = req.params;
+        const userZodValidated = UserValidatedSchema.parse(userData);
         const result = await UserServices.updateUserInformationFromDB(
             Number(userId),
             userZodValidated,
         );
 
-        if (result) {
-            res.status(200).json({
-                success: true,
-                message: 'Successfully Updated the user information',
-                data: result,
-            });
-        }
+        res.status(200).json({
+            success: true,
+            message: 'Successfully Updated the user information',
+            data: result,
+        });
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
         res.status(404).json({
@@ -117,19 +116,12 @@ const deleteUser = async (req: Request, res: Response) => {
         const { userId } = req.params;
         const result = await UserServices.deleteUserFromDB(Number(userId));
 
-        if (result && result !== undefined && result !== null) {
-            res.status(200).json({
-                success: true,
-                message: 'Successfully Deleted the data',
-                data: result,
-            });
-        } else {
-            res.status(404).json({
-                success: false,
-                message: 'Data Could not Deleted',
-                data: result,
-            });
-        }
+        res.status(200).json({
+            success: true,
+            message: 'Successfully Deleted the data',
+            data: result,
+        });
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
         res.status(500).json({

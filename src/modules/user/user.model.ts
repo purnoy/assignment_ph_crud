@@ -79,30 +79,61 @@ UserSchema.post(
 );
 
 //Query Middleware
-UserSchema.pre('find', function (next) {
-    this.find({ isDeleted: { $ne: true } });
-    this.select({ password: 0 });
+
+UserSchema.pre('save', async function (next) {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const data = this;
+    data.password = await bcrypt.hash(
+        data.password,
+        Number(config.bcrypt_salt_round),
+    );
     next();
 });
 
-UserSchema.pre('findOne', function (next) {
-    this.findOne({ isDeleted: { $ne: true } });
+UserSchema.pre('findOneAndUpdate', async function (next) {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const data = this.getUpdate() as Partial<TUser>;
+    // Check if the update operation includes the password field
+    if (data.password) {
+        data.password = await bcrypt.hash(
+            data.password,
+            Number(config.bcrypt_salt_round),
+        );
+    }
+    next();
+});
+
+UserSchema.pre('find', async function (next) {
     this.select({ password: 0 });
     next();
 });
-UserSchema.pre('aggregate', function (next) {
+UserSchema.pre('findOne', async function (next) {
+    this.select({ password: 0 });
+    next();
+});
+UserSchema.pre('aggregate', async function (next) {
     this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
     this.pipeline().push({ $project: { password: 0 } });
     next();
 });
 
+UserSchema.post(
+    'save',
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async function (doc: any, next) {
+        // forcing doc to any to delete password as it is required on user type
+
+        delete doc.password;
+
+        next();
+    },
+);
+
 //Instace for finding whether the user is avalable in the database or not
-UserSchema.statics.isUserExists = async function (id: number) {
-    const existingUser = await UserMainModel.findOne({ userId: id });
-    return existingUser !== null;
+UserSchema.statics.isUserExists = async function (userId: number) {
+    return !!(await UserMainModel.findOne({ userId }));
 };
 UserSchema.statics.isUsernameExists = async function (username: string) {
-    const usernameExists = await UserMainModel.findOne({ username });
-    return usernameExists;
+    return !!(await UserMainModel.findOne({ username }));
 };
 export const UserMainModel = model<TUser, UserModel>('user', UserSchema);

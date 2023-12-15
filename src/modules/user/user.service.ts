@@ -1,7 +1,5 @@
 import { TOrder, TUser } from './user.interface';
 import { UserMainModel } from './user.model';
-import bcrypt from 'bcrypt';
-import config from '../../app/config';
 
 //Requirement - 1 Create a new user
 const createUserFromDB = async (userData: TUser) => {
@@ -62,8 +60,6 @@ const getSingleUserFromDB = async (userId: number) => {
 
 //Requirement - 4 Update user information
 const updateUserInformationFromDB = async (id: number, userData: TUser) => {
-    const updatedUser = new UserMainModel(userData);
-
     if (!(await UserMainModel.isUserExists(id))) {
         throw new Error('This user is not available');
     }
@@ -71,48 +67,45 @@ const updateUserInformationFromDB = async (id: number, userData: TUser) => {
         userId: id,
     });
     if (
-        updatedUser.userId !== existingUser?.userId ||
-        updatedUser.username !== existingUser.username
+        (await UserMainModel.isUserExists(userData.userId)) &&
+        existingUser?.userId !== userData.userId
     ) {
-        throw new Error('Username Or UserID can not be Changed');
+        throw new Error('UserID can not be Changed');
+    }
+    if (
+        (await UserMainModel.isUsernameExists(userData.username)) &&
+        existingUser?.username !== userData.username
+    ) {
+        throw new Error('Username can not be Changed');
     }
 
-    if (updatedUser.password) {
-        updatedUser.password = await bcrypt.hash(
-            updatedUser.password,
-            Number(config.bcrypt_salt_round),
-        );
-    }
     const result = await UserMainModel.findOneAndUpdate(
         { userId: id },
-        { $set: { ...updatedUser.toObject(), _id: existingUser._id } },
+        { userData },
         {
             new: true,
             select: {
-                orders: 0,
-                password: 0,
+                username: 1,
+                userId: 1,
+                fullName: 1,
+                age: 1,
+                email: 1,
+                isActive: 1,
+                hobbies: 1,
+                address: 1,
+                _id: 0,
             },
-
-            username: 1,
-            userId: 1,
-            fullName: 1,
-            age: 1,
-            email: 1,
-            isActive: 1,
-            hobbies: 1,
-            address: 1,
-            _id: 0,
         },
     );
     return result;
 };
 
 //5. Delete a user
-const deleteUserFromDB = async (userIdtoDelete: number) => {
-    if (!(await UserMainModel.isUserExists(userIdtoDelete))) {
-        throw new Error('User does not exist!!');
+const deleteUserFromDB = async (userId: number) => {
+    if (!(await UserMainModel.isUserExists(userId))) {
+        throw new Error('User does not exist!! select a valid user');
     }
-    await UserMainModel.deleteOne({ userId: userIdtoDelete });
+    await UserMainModel.deleteOne({ userId });
     return null;
 };
 
